@@ -1,5 +1,5 @@
 import "./App.css";
-import TimerContainer from "./components/TimerContainer";
+import Timer from "./components/Timer";
 import { useLocalStorage } from "react-use";
 import GithubCorner from "react-github-corner";
 
@@ -23,12 +23,12 @@ function App() {
     <div className="App">
       {timers.map((id, index) => {
         return (
-          <TimerContainer
+          <Timer
             key={id}
             id={id}
             name={index}
             deleteTimer={deleteTimer}
-          ></TimerContainer>
+          ></Timer>
         );
       })}
       <button className="addAnotherButton" onClick={addAnotherTimer}>

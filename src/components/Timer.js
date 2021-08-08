@@ -1,11 +1,10 @@
 import { useTimer } from "react-timer-hook";
 import "./timer.css";
-import cx from "classnames";
 import { useEffect, useState } from "react";
 import addSeconds from "date-fns/addSeconds";
 import Modal from "react-modal";
 import { useLocalStorage } from "react-use";
-import differenceInSeconds from "date-fns/differenceInSeconds";
+import InputTime from "./InputTime";
 
 const customStyles = {
   content: {
@@ -20,20 +19,40 @@ const customStyles = {
 
 const getLeadingZero = (num) => (Number(num) < 10 ? "0" + num : num);
 
-export default function Timer({ endTime, onExpire }) {
+export default function Timer({ name, deleteTimer, id }) {
+  const [duration, setDuration, removeDuration] = useLocalStorage(
+    id + "_duration",
+    2 * 60
+  );
+  const [endTime, setEndTime, removeEndTime] = useLocalStorage(
+    id + "_endTime",
+    addSeconds(new Date(), 2 * 60).valueOf()
+  );
+  const [timerName, setTimerName, removeTimerName] = useLocalStorage(
+    id + "_timerName",
+    `Timer ${name || 0}`
+  );
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [hoursInput, setHoursInput] = useState(0);
+  const [minsInput, setMinsInput] = useState(0);
+  const [secsInput, setSecsInput] = useState(0);
+
   const {
     seconds,
     minutes,
     hours,
-    // days,
+    days,
     isRunning,
-    start,
+    // start,
     // pause,
     // resume,
     restart,
   } = useTimer({
     expiryTimestamp: new Date(endTime),
-    onExpire: () => onExpire && onExpire(),
+    onExpire: () => {
+      const audio = new Audio("/small-bell-ring-01a.wav");
+      audio.play();
+    },
     autoStart: true,
   });
 
@@ -41,23 +60,9 @@ export default function Timer({ endTime, onExpire }) {
     setIsOpen(true);
   }
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  const onClickStart = () => {
-    const startTime = new Date();
-    const endTime = addSeconds(startTime, duration);
-    setStartTime(startTime.valueOf());
-    setEndTime(endTime.valueOf());
-
-    start();
-  };
-
   const restartToExpiryTime = () => {
     const startTime = new Date();
     const endTime = addSeconds(startTime, duration);
-    setStartTime(startTime.valueOf());
     setEndTime(endTime.valueOf());
 
     restart(addSeconds(startTime, duration));
@@ -82,16 +87,14 @@ export default function Timer({ endTime, onExpire }) {
   const onSaveEdit = () => {
     const newDuration =
       Number(hoursInput) * 60 * 60 + Number(minsInput) * 60 + Number(secsInput);
-    const startTime = new Date();
-    const endTime = addSeconds(startTime, duration);
+    const endTime = addSeconds(new Date(), newDuration);
 
     setDuration(newDuration);
-    setStartTime(startTime.valueOf());
     setEndTime(endTime.valueOf());
 
     setIsOpen(false);
 
-    restart(addSeconds(startTime, duration));
+    restart(endTime);
   };
 
   const onClickDelete = () => {
@@ -101,45 +104,36 @@ export default function Timer({ endTime, onExpire }) {
   useEffect(() => {
     return () => {
       removeDuration();
-      removeStartTime();
       removeEndTime();
+      removeTimerName();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-      >
+      <Modal isOpen={modalIsOpen} style={customStyles}>
         <div className="modal">
           <h2 style={{ marginBottom: 40 }}>Edit timer</h2>
           <div className="inputContainer">
             <div className="inputField">
-              <input
-                type="number"
+              <InputTime
                 value={hoursInput}
                 onChange={onChangeHours}
-              ></input>
+              ></InputTime>
               <span>Hrs</span>
             </div>
             <span className="divider">:</span>
             <div className="inputField">
-              <input
-                type="number"
+              <InputTime
                 value={minsInput}
                 onChange={onChangeMinutes}
-              ></input>
+              ></InputTime>
               <span>Mins</span>
             </div>
             <span className="divider">:</span>
             <div className="inputField">
-              <input
-                type="number"
-                value={secsInput}
-                onChange={onChangeSecs}
-              ></input>
+              <InputTime value={secsInput} onChange={onChangeSecs}></InputTime>
               <span>Secs</span>
             </div>
           </div>
@@ -169,25 +163,20 @@ export default function Timer({ endTime, onExpire }) {
       <div>
         <div className="mainTimer">
           <div className={"timer"}>
+            <span>{getLeadingZero(days)}</span>:
             <span>{getLeadingZero(hours)}</span>:
             <span>{getLeadingZero(minutes)}</span>:
             <span>{getLeadingZero(seconds)}</span>
           </div>
 
-          {!isRunning && (
-            <button className={"controlButton start"} onClick={onClickStart}>
-              Start
-            </button>
-          )}
-
           <button className="controlButton reset" onClick={restartToExpiryTime}>
             Reset
           </button>
+
+          {!isRunning && <h2 className={"doneText"}>DONE</h2>}
         </div>
         <div>
-          <span style={{ fontSize: 18 }}>
-            {timerName} ({duration})
-          </span>
+          <span style={{ fontSize: 18 }}>{timerName}</span>
 
           <button
             className="subControlButton"
@@ -196,9 +185,13 @@ export default function Timer({ endTime, onExpire }) {
           >
             Edit
           </button>
-          {/* <button className="subControlButton" style={{ color: "#d0021b" }}>
+          <button
+            className="subControlButton"
+            style={{ color: "#d0021b" }}
+            onClick={onClickDelete}
+          >
             Remove
-          </button> */}
+          </button>
         </div>
       </div>
       <hr></hr>
