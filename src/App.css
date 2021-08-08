@@ -1,0 +1,17 @@
+body {
+  background-color: rgb(245, 248, 251);
+}
+.App {
+  margin-left: auto;
+  margin-right: auto;
+  width: 1000px;
+}
+
+.addAnotherButton {
+  margin-top: 25px;
+  border: 0;
+  background: none;
+  color: #556bb5;
+  font-size: 18px;
+  cursor: pointer;
+}

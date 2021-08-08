@@ -1,0 +1,129 @@
+.mainTimer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.timer {
+  color: #000;
+  overflow: visible;
+  white-space: nowrap;
+  font-size: 60px;
+  transition: 0.4s ease-in;
+  margin-bottom: 12px;
+}
+
+.controlButton {
+  text-align: center;
+  border-radius: 50%;
+  outline: 0;
+  height: 64px;
+  width: 64px;
+  font-size: 14px;
+  color: white;
+  border: 1px solid black;
+  margin-left: 20px;
+  cursor: pointer;
+  background: white;
+  border: 0;
+}
+
+.controlButton:active {
+  opacity: 0.5;
+}
+
+.subControlButton {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.subControlButton:active {
+  opacity: 0.5;
+}
+
+.start {
+  background-color: #17a69d;
+}
+
+.pause {
+  background-color: #fb647f;
+}
+
+.reset {
+  background-color: #4387d0;
+}
+
+.doneText {
+  color: #2d9c01;
+  margin-left: 20px;
+}
+
+.modal {
+  width: 520px;
+}
+
+.inputContainer {
+  display: flex;
+}
+
+.inputField input {
+  width: 90px;
+  height: 30px;
+  font-size: 20px;
+}
+
+.inputField {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
+.inputFieldText {
+  display: flex;
+  flex-direction: column;
+}
+
+.text {
+  width: 160px;
+  height: 30px;
+  font-size: 20px;
+}
+
+.inputField span {
+  color: #454545;
+  display: block;
+  font-weight: 700;
+}
+
+.divider {
+  display: inline-block;
+  margin: 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: 80px;
+  align-items: flex-end;
+}
+
+.footer button {
+  font-size: 14px;
+  color: white;
+  height: 35px;
+  border: none;
+  width: 100px;
+}
+
+.deleteButton {
+  background-color: #e54028;
+}
+
+.doneButton {
+  background-color: #7db500;
+}
